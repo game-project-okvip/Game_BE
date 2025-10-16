@@ -15,6 +15,7 @@ const whitelist_route_1 = __importDefault(require("./routes/whitelist.route"));
 const role_route_1 = __importDefault(require("./routes/role.route"));
 const auth_route_1 = __importDefault(require("./routes/auth.route"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
+const client_route_1 = __importDefault(require("./routes/client.route"));
 dotenv_1.default.config();
 const ALLOWLIST = [
     'http://localhost:3003',
@@ -79,6 +80,8 @@ const buildServer = async () => {
     await app.register(whitelist_route_1.default, { prefix: '/whitelist' });
     await app.register(role_route_1.default, { prefix: '/role' });
     await app.register(user_route_1.default, { prefix: 'user' });
+    //Client
+    await app.register(client_route_1.default, { prefix: '/client' });
     return app;
 };
 exports.buildServer = buildServer;

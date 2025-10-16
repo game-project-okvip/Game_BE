@@ -11,6 +11,7 @@ import whitelistRoutes from './routes/whitelist.route';
 import roleRoutes from './routes/role.route';
 import authRoutes from './routes/auth.route';
 import userRoutes from './routes/user.route';
+import clientRoutes from './routes/client.route';
 dotenv.config();
 
 
@@ -85,6 +86,9 @@ export const buildServer = async () => {
   await app.register(whitelistRoutes, { prefix: '/whitelist' });
   await app.register(roleRoutes, { prefix: '/role' });
   await app.register(userRoutes, { prefix: 'user' });
+
+  //Client
+  await app.register(clientRoutes, { prefix: '/client' });
   
   return app;
 };

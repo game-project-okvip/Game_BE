@@ -6,4 +6,5 @@ export declare const createAdminAccounts: (request: FastifyRequest, reply: Fasti
 export declare const getAdminDetail: (request: FastifyRequest, reply: FastifyReply) => Promise<never>;
 export declare const updateUser: (request: FastifyRequest, reply: FastifyReply) => Promise<never>;
 export declare const deleteUser: (request: FastifyRequest, reply: FastifyReply) => Promise<never>;
+export declare const getClientInfo: (request: FastifyRequest, reply: FastifyReply) => Promise<never>;
 //# sourceMappingURL=user.controller.d.ts.map

@@ -3,8 +3,8 @@ import ClientModel from "../models/client.model";
 import AdminModel from "../models/admin.model";
 import { ApiResponse } from "../utils/apiResponse";
 import bcrypt from "bcryptjs";
-import { Admin } from "mongodb";
 
+// Admin API
 export const getallClient = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
         const clientList = await ClientModel.find().select('-__v');
@@ -103,4 +103,23 @@ export const deleteUser = async (request: FastifyRequest, reply: FastifyReply) =
 
     await user.deleteOne();
     return reply.send({ message: "User deleted" });
+}
+
+//Client API
+export const getClientInfo = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { account } = request.body as any;
+    try {
+        //Call BO API to get client data
+        const clientInfo = 200
+        if (clientInfo !== 200) {
+            return reply.code(404).send({ message: 'Account not found' } satisfies ApiResponse);
+        }
+        //Insert into our Db after get from BO API
+        const client = new ClientModel({ username : "FROM BO", name: "FROM BO return", balance: "From BO return"});
+        await client.save();
+        return reply.send({ message: 'get Client Info successfully', data: "From BO or From our model" });
+    } catch (error) {
+        request.log.error(`Error at create transaction - ${error}`);
+        return reply.code(500).send({ message: 'System error' } satisfies ApiResponse);
+    }
 }

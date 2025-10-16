@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getAdminDetail = exports.createAdminAccounts = exports.getAdminAccounts = exports.getClientDetail = exports.getallClient = void 0;
+exports.getClientInfo = exports.deleteUser = exports.updateUser = exports.getAdminDetail = exports.createAdminAccounts = exports.getAdminAccounts = exports.getClientDetail = exports.getallClient = void 0;
 const client_model_1 = __importDefault(require("../models/client.model"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+// Admin API
 const getallClient = async (request, reply) => {
     try {
         const clientList = await client_model_1.default.find().select('-__v');
@@ -96,4 +97,24 @@ const deleteUser = async (request, reply) => {
     return reply.send({ message: "User deleted" });
 };
 exports.deleteUser = deleteUser;
+//Client API
+const getClientInfo = async (request, reply) => {
+    const { account } = request.body;
+    try {
+        //Call BO API to get client data
+        const clientInfo = 200;
+        if (clientInfo !== 200) {
+            return reply.code(404).send({ message: 'Account not found' });
+        }
+        //Insert into our Db after get from BO API
+        const client = new client_model_1.default({ username: "FROM BO", name: "FROM BO return", balance: "From BO return" });
+        await client.save();
+        return reply.send({ message: 'get Client Info successfully', data: "From BO or From our model" });
+    }
+    catch (error) {
+        request.log.error(`Error at create transaction - ${error}`);
+        return reply.code(500).send({ message: 'System error' });
+    }
+};
+exports.getClientInfo = getClientInfo;
 //# sourceMappingURL=user.controller.js.map
