@@ -1,0 +1,2 @@
+[2025-10-16 20:07:53] [[32minfo[39m] BACKEND SYSTEM - CREATE WHITELIST - admin - {"ip":"100.100.100.1","description":"test","createBy":"admin","updateBy":"admin","_id":"68f0ee29e49b3b0c2dd4c382","createdAt":"2025-10-16T13:07:53.938Z","updatedAt":"2025-10-16T13:07:53.938Z"}
+[2025-10-16 20:11:39] [[32minfo[39m] BACKEND SYSTEM - DELETE WHITELIST - Robert - 68f0ee29e49b3b0c2dd4c382

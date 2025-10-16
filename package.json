@@ -1,0 +1,44 @@
+{
+  "name": "be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "description": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "serve": "nodemon --watch dist --ext js --exec node dist/server.js",
+    "dev": "concurrently -n TSC,NODE \"tsc -w -p tsconfig.json\" \"wait-on dist/server.js && npm run serve\"",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^11.1.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/sensible": "^6.0.3",
+    "@fastify/swagger": "^9.5.2",
+    "@fastify/swagger-ui": "^5.2.3",
+    "@fastify/type-provider-typebox": "^6.0.0",
+    "@sinclair/typebox": "^0.34.41",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.9.0",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.7.2",
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "wait-on": "^9.0.1"
+  }
+}
