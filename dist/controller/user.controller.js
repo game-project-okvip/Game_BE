@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getClientInfo = exports.deleteUser = exports.updateUser = exports.getAdminDetail = exports.createAdminAccounts = exports.getAdminAccounts = exports.getClientDetail = exports.getallClient = void 0;
 const client_model_1 = __importDefault(require("../models/client.model"));
 const admin_model_1 = __importDefault(require("../models/admin.model"));
+const api_service_1 = require("../services/api.service");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 // Admin API
 const getallClient = async (request, reply) => {
@@ -99,17 +100,36 @@ const deleteUser = async (request, reply) => {
 exports.deleteUser = deleteUser;
 //Client API
 const getClientInfo = async (request, reply) => {
-    const { account } = request.body;
+    const { account } = request.query;
+    if (!account || account === "") {
+        return reply.code(400).send({ message: 'Account Require' });
+    }
     try {
-        //Call BO API to get client data
-        const clientInfo = 200;
-        if (clientInfo !== 200) {
-            return reply.code(404).send({ message: 'Account not found' });
+        // Get Member Info
+        const memberInfo = await (0, api_service_1.getMemberInfo)(account);
+        if (memberInfo.status_code !== 200) {
+            return reply.code(404).send({ message: `Account ${account} not found in the system.` });
         }
+        const member = memberInfo?.data?.Result.Member;
+        //Get Deposit Info
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999);
+        const start_time = todayStart.getTime();
+        const end_time = todayEnd.getTime();
+        console.log("Start", start_time);
+        console.log("End", end_time);
+        const depositHistory = await (0, api_service_1.getFullDepositHistory)(account, start_time.toString(), end_time.toString());
+        if (depositHistory.status_code !== 200) {
+            return reply.code(400).send({ message: `Account ${account} deposit history not found.` });
+        }
+        //console.log("Successfully get deposit info", depositHistory.data?.Result?.Records);
+        const deposit = depositHistory?.data?.Result.Records[0];
         //Insert into our Db after get from BO API
-        const client = new client_model_1.default({ username: "FROM BO", name: "FROM BO return", balance: "From BO return" });
+        const client = new client_model_1.default({ username: member?.Account, name: member?.Name, balance: deposit?.Amount });
         await client.save();
-        return reply.send({ message: 'get Client Info successfully', data: "From BO or From our model" });
+        return reply.send({ message: 'get Client Info successfully', data: client });
     }
     catch (error) {
         request.log.error(`Error at create transaction - ${error}`);
