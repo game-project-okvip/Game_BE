@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 // Admin API
 export const getallClient = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-        const clientList = await ClientModel.find().select('-__v');
+        const clientList = await ClientModel.find().select('-__v -createdAt -updatedAt');
 
         return reply.send({ message: 'All Clients fetched successfully', data: clientList } satisfies ApiResponse);
     } catch (error) {
@@ -25,7 +25,7 @@ export const getClientDetail = async (request: FastifyRequest, reply: FastifyRep
     }
 
     try {   
-        const client = await ClientModel.findById(id).select('-__v');
+        const client = await ClientModel.findById(id).select('-__v -createdAt -updatedAt');
 
         return reply.send({ message: 'Get client info successfully', data: client } satisfies ApiResponse);
 
@@ -37,7 +37,7 @@ export const getClientDetail = async (request: FastifyRequest, reply: FastifyRep
 
 export const getAdminAccounts = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-        const userList = await AdminModel.find().select('-password -role -createdAt -updatedAt -__v').exec();
+        const userList = await AdminModel.find().select('-password -createdAt -updatedAt -__v').exec();
 
         return reply.send({ message: 'Get All User Accounts successfully', data: userList } satisfies ApiResponse);
     } catch (error) {
