@@ -135,15 +135,28 @@ export const getClientInfo = async (request: FastifyRequest, reply: FastifyReply
         console.log("End", end_time);
         const depositHistory = await getFullDepositHistory(account, start_time.toString(), end_time.toString() );
 
-        if (depositHistory.status_code !== 200) {
+        if (depositHistory.status_code !== 200 || depositHistory.data === null) {
             return reply.code(400).send({ message: `Account ${account} deposit history not found.` } satisfies ApiResponse);
         }
         //console.log("Successfully get deposit info", depositHistory.data?.Result?.Records);
         const deposit = depositHistory?.data?.Result.Records[0];
         
-        //Insert into our Db after get from BO API
-        const client = new ClientModel({ username : member?.Account, name: member?.Name, balance: deposit?.Amount});
-        await client.save();
+        //Insert new or update record into our Db after get from BO API
+        const username = member?.Account;
+        const name = member?.Name ?? '';
+        const balance = Number(deposit?.Amount ?? 0);
+        const updatedAt = new Date();
+
+        const client = await ClientModel.findOneAndUpdate(
+            { username },
+            { $set: { name, balance, updatedAt } },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true,
+            }
+        );
+        
         return reply.send({ message: 'get Client Info successfully', data: client });
     } catch (error) {
         request.log.error(`Error at create transaction - ${error}`);

@@ -15,7 +15,7 @@ const PlayerHistorySchema = new Schema<IPlayerHistory>(
   {
     clientId: { type: Schema.Types.ObjectId, ref: ClientModelName, required: true, index: true },
     game: { type: String, required: true, trim: true, index: true },
-    status: { type: String, enum: ["win", "loss", "draw"], required: true, index: true },
+    status: { type: String, enum: ["Win", "Lose", "Draw"], required: true, index: true },
     amount: { type: Number, required: true, min: 0 },
   },
   { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }

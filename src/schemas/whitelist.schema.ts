@@ -11,7 +11,6 @@ export const createWhitelistSchema = {
         ]
       },
       description: { type: "string" },
-      createBy: { type: "string" },
     },
   },
 };
@@ -36,7 +35,6 @@ export const updateWhitelistSchema = {
         ]
       },
       description: { type: "string" },
-      updateBy: { type: "string" },
     },
   },
 };

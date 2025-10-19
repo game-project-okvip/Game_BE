@@ -19,6 +19,7 @@ const ALLOWLIST = [
   'http://localhost:3003',
   'http://127.0.0.1:3003',
   'http://localhost:5173',
+  'http://128.10.102.8:3003',
   /\.vercel\.app$/,
   /\.netlify\.app$/,
 ];

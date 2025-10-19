@@ -43,7 +43,7 @@ export const checkAuthMiddleware = async (
     // 🔎 Validate user in DB
     const account = await AdminModel
       .findOne({ username: decoded?.username })
-      .select("-password -__v -qr_code_image")
+      .select("-password -__v")
       .populate("role");
 
     if (!account) {

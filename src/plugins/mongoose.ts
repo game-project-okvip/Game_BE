@@ -7,6 +7,7 @@ import PlayerHistoryModel from '../models/playerHistory.model';
 import TransactionModel from '../models/transaction.model';
 import WhitelistModel, { IWhitelist } from '../models/whitelist.model';
 import { allRole } from '../const/modal';
+import bcrypt from "bcryptjs";
 import logger from '../winston';
 
 export default fp(async (fastify, opts) => {
@@ -57,7 +58,7 @@ export const defaultConfig = async () => {
       const newAdmin: Partial<IAdmin> = {
         username: "admin",
         name: "Admin",
-        password: "admin", // Consider hashing this password before storing in production
+        password: await bcrypt.hash("admin", 10), // Consider hashing this password before storing in production
         role: superAdminRole._id as Types.ObjectId,
       };
       await AdminModel.create([newAdmin], { session });

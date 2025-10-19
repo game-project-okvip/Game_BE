@@ -5,13 +5,14 @@ import swaggerUI from '@fastify/swagger-ui';
 import { FastifyPluginAsync } from 'fastify';
 const swaggerPlugin: FastifyPluginAsync = fp(async (fastify) => {
   await fastify.register(swagger, {
+    prefix: '/docs',
     swagger: {
       info: {
         title: 'OKVIP Game API',
         description: 'API documentation for OKVIP Game',
         version: '1.0.0',
       },
-      host: `localhost:3003`,
+      // host: `localhost:3003`,
       schemes: ['http'],
       consumes: ['application/json'],
       produces: ['application/json'],
@@ -30,11 +31,13 @@ const swaggerPlugin: FastifyPluginAsync = fp(async (fastify) => {
   await fastify.register(swaggerUI, {
     routePrefix: '/docs',
     uiConfig: {
+      url: '/docs/json',
       docExpansion: 'list',
       deepLinking: false,
+      persistAuthorization: true,
     },
     staticCSP: true,
-    transformStaticCSP: (header) => header,
+    transformStaticCSP: (header) => header.replace(/;?\s*upgrade-insecure-requests/g, ''),
   });
 });
 

@@ -113,7 +113,7 @@ export const update_whitelist = async (request: FastifyRequest, reply: FastifyRe
  */
 export const delete_whitelist = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const { id } = request.body as any;
+    const { id } = request.query as any;
     const user = request.userData as JWTUserPayload | undefined;
 
     if (!id) {
