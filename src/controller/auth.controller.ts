@@ -15,7 +15,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
     }
     try {
         const isExist = await AdminModel.findOne({ username })
-        .populate([{ path: "role", select: "role permission" }]).exec();
+        .populate([{ path: "role", select: "role permission isSuperAdmin" }]).exec();
 
         if (!isExist) {
             return reply.code(404).send({ message: 'Account not found, please check and try again' } satisfies  ApiResponse);

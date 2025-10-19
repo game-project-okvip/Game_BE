@@ -4,6 +4,7 @@ import AdminModel from "../models/admin.model";
 import { ApiResponse } from "../utils/apiResponse";
 import { getMemberInfo, getFullDepositHistory } from "../services/api.service";
 import bcrypt from "bcryptjs";
+import PlayerHistoryModel from "../models/playerHistory.model";
 
 // Admin API
 export const getallClient = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -27,7 +28,19 @@ export const getClientDetail = async (request: FastifyRequest, reply: FastifyRep
     try {   
         const client = await ClientModel.findById(id).select('-__v -createdAt -updatedAt');
 
-        return reply.send({ message: 'Get client info successfully', data: client } satisfies ApiResponse);
+        if (!client) {
+            return reply.code(400).send({ message: "Client not found." }  satisfies ApiResponse);
+        }
+        const histories = await PlayerHistoryModel.find({ clientId: id })
+        .sort({ createdAt: -1 }).limit(10).select("-__v -clientId");
+
+        return reply.send({
+        message: "Get client info successfully",
+        data: {
+            client,
+            histories,
+        },
+        } satisfies ApiResponse);
 
     } catch (error) {
         request.log.error(`Error at Get Client By Id - ${error}`);
