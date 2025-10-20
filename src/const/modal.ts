@@ -4,6 +4,7 @@ export const allRole = {
   "user": { "GET": true, "POST": true, "PATCH": true, "DELETE": true },
   "player": { "GET": true, "POST": false, "PATCH": false, "DELETE": false },
   "playhistory": { "GET": true, "POST": false, "PATCH": false, "DELETE": false },
+  "playertransction": { "GET": true, "POST": false, "PATCH": false, "DELETE": false },
 }
 
 export const secret_key = "ROBERT_KEY";

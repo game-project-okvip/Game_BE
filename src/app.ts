@@ -13,6 +13,7 @@ import authRoutes from './routes/auth.route';
 import userRoutes from './routes/user.route';
 import playerRoutes from './routes/player.route';
 import playHistoryRoutes from './routes/playhistory.route';
+import playerTransctionRoutes from './routes/playertransction.route';
 import clientRoutes from './routes/client.route';
 dotenv.config();
 
@@ -90,6 +91,7 @@ export const buildServer = async () => {
   await app.register(roleRoutes, { prefix: '/role' });
   await app.register(playerRoutes, { prefix: '/player' });
   await app.register(playHistoryRoutes, { prefix: '/playhistory' });
+  await app.register(playerTransctionRoutes, { prefix: '/playertransction' });
   await app.register(userRoutes, { prefix: '/user' });
 
   //Client

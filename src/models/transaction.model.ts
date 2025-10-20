@@ -1,7 +1,7 @@
 import { Schema, model, models, Model, Types } from "mongoose";
 import { ClientModelName } from "./client.model";
 
-export type TxType = "in" | "out";
+export type TxType = "Deposit" | "Withdraw";
 
 export interface ITransaction {
   clientId: Types.ObjectId;
@@ -14,7 +14,7 @@ const TransactionSchema = new Schema<ITransaction>(
   {
     clientId: { type: Schema.Types.ObjectId, ref: ClientModelName, required: true, index: true },
     amount: { type: Number, required: true, min: 0 },
-    type: { type: String, enum: ["in", "out"], required: true, index: true },
+    type: { type: String, enum: ["Deposit", "Withdraw"], required: true, index: true },
   },
   { timestamps: { createdAt: true, updatedAt: false }, versionKey: false }
 );

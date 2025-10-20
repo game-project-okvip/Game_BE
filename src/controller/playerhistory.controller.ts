@@ -1,7 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
+import mongoose from "mongoose";
 import PlayerHistoryModel from "../models/playerHistory.model";
 import { ApiResponse } from "../utils/apiResponse";
 import ClientModel from "../models/client.model";
+import TransactionModel from "../models/transaction.model";
 
 // Admin APIs
 export const getHistoryFilterList = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -11,6 +13,7 @@ export const getHistoryFilterList = async (request: FastifyRequest, reply: Fasti
     const q: any = {};
     const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+    // Date Validation
     if (start && end) {
       const startDate = new Date(start);
       const endDate = new Date(end);
@@ -19,6 +22,7 @@ export const getHistoryFilterList = async (request: FastifyRequest, reply: Fasti
       }
     }
 
+    // Account filter
     if (name) {
       const player = await ClientModel.findOne({ username: name }).select("_id").lean();
       if (!player) {
@@ -27,7 +31,7 @@ export const getHistoryFilterList = async (request: FastifyRequest, reply: Fasti
       q.clientId = player._id;
     }
 
-    // Game filter (substring, case-insensitive)
+    // Game filter
     if (game && game.trim()) {
       q.game = { $regex: escapeRegExp(game.trim()), $options: "i" };
     }
@@ -77,7 +81,6 @@ export const getHistoryFilterList = async (request: FastifyRequest, reply: Fasti
   }
 }
 
-
 // Client APIs
 export const GetPlayerHistoryByAccount = async (request: FastifyRequest, reply: FastifyReply) => {
     const { account } = request.query as { account?: string };
@@ -103,25 +106,40 @@ export const GetPlayerHistoryByAccount = async (request: FastifyRequest, reply: 
 }
 
 export const CreatePlayerHistory = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { account, game, amount, status } = request.body as any;
-    try {
-        const player = await ClientModel.findOne({ username: account });
+  const { account, game, amount, status } = request.body as any;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    let type = "Deposit";
+    
+    const player = await ClientModel.findOne({ username: account });
 
-        if (!player) {
-            return reply.code(404).send({ message: `Player - ${account} not found` } satisfies ApiResponse);
-        }
-        
-        if (status === "Win") {
-            // Call BO API
-        } else if (status === "Lose") {
-            // Call BO API
-        }
-
-        const history = new PlayerHistoryModel({ clientId: player._id, game, status, amount });
-        history.save();
-        return reply.send({ message: 'Player History created successfully', data: history });
-    } catch (error) {
-        request.log.error(`Error at create Player History - ${error}`);
-        return reply.code(500).send({ message: 'System error' } satisfies ApiResponse);
+    if (!player) {
+        return reply.code(404).send({ message: `Player - ${account} not found` } satisfies ApiResponse);
     }
+    
+    if (status === "Win") {
+        // Call BO API
+    } else if (status === "Lose") {
+      type = "Withdraw";
+        // Call BO API
+    }
+
+    const history = new PlayerHistoryModel({ clientId: player._id, game, status, amount });
+    history.save();
+    
+    if (status !== "Draw") {
+      const trans = new TransactionModel({ clientId: player._id, amount, type });
+      trans.save();
+    }
+    
+    await session.commitTransaction();
+    return reply.send({ message: 'Player History created successfully', data: history });
+  } catch (error) {
+    await session.abortTransaction();
+    request.log.error(`Error at create Player History - ${error}`);
+    return reply.code(500).send({ message: 'System error' } satisfies ApiResponse);
+  } finally {
+      session.endSession();
+  }
 }
