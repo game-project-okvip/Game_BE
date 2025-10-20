@@ -47,7 +47,7 @@ export const defaultConfig = async () => {
     const defaultWhitelist = await WhitelistModel.countDocuments().session(session);
     if (defaultWhitelist === 0) {
       const whitelistEntries: Partial<IWhitelist>[] = [
-        { ip: "127.0.0.1", description: "Default IP", createBy: "admin" }
+        { ip: "128.10.102.8", description: "Default IP", createBy: "admin" }
       ];
       await WhitelistModel.insertMany(whitelistEntries, { session });
     }

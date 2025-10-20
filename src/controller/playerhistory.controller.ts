@@ -11,6 +11,14 @@ export const getHistoryFilterList = async (request: FastifyRequest, reply: Fasti
     const q: any = {};
     const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+    if (start && end) {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+      if (endDate < startDate) {
+        return reply.code(400).send({ message: "Invalid date range: end date cannot be earlier than start date" });
+      }
+    }
+
     if (name) {
       const player = await ClientModel.findOne({ username: name }).select("_id").lean();
       if (!player) {
